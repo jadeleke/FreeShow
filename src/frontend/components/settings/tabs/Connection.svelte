@@ -99,6 +99,13 @@
     // Answer / Guess / Poll
 
     $: cloudOnly = { churchApps: !!$special.churchAppsCloudOnly }
+    $: connectionsByServer = servers.reduce(
+        (acc, s) => {
+            acc[s.id] = Object.keys($connections[s.id.toUpperCase()] || {}).length
+            return acc
+        },
+        {} as Record<string, number>
+    )
     function contentProviderConnect(providerId: ContentProviderId) {
         if (!$providerConnections[providerId] || cloudOnly[providerId]) {
             if (providerId === "churchApps") {
@@ -172,7 +179,7 @@
 
 {#each servers as server}
     {@const disabled = server.id === "companion" ? $companion?.enabled !== true : server.enabledByDefault ? $disabledServers[server.id] === true : $disabledServers[server.id] !== false}
-    {@const connections = Object.keys($connections[server.id.toUpperCase()] || {})?.length || 0}
+    {@const connections = connectionsByServer[server.id] || 0}
 
     <InputRow>
         <MaterialButton

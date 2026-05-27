@@ -36,7 +36,7 @@ export async function setPlayingState(data: NowPlayingData) {
             deleteFile(filePathCover)
         }
     } else {
-        const img = nativeImage.createFromBuffer(buffer)
+        const img = nativeImage.createFromBuffer(Buffer.from(buffer))
         writeFile(filePathCover, img.toPNG())
 
         const { width, height } = img.getSize()
@@ -44,7 +44,7 @@ export async function setPlayingState(data: NowPlayingData) {
             const scale = Math.min(640 / width, 480 / height)
             coverBuffer = img.resize({ width: Math.round(width * scale), height: Math.round(height * scale) }).toJPEG(90)
         } else {
-            coverBuffer = buffer
+            coverBuffer = Buffer.from(buffer)
         }
     }
 

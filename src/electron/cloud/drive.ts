@@ -1,5 +1,4 @@
 import { auth, drive, type drive_v3 } from "@googleapis/drive"
-import type { GaxiosResponse } from "gaxios"
 import path from "path"
 import { isProd } from ".."
 import { Main } from "../../types/IPC/Main"
@@ -37,7 +36,7 @@ export async function authenticate(keysFilePath: string) {
 export async function listFolders(pageSize = 20, sort = "modified") {
     if (!driveClient) return
 
-    let res: GaxiosResponse<drive_v3.Schema$FileList>
+    let res: any
     try {
         res = await driveClient.files.list({
             pageSize,
@@ -51,11 +50,11 @@ export async function listFolders(pageSize = 20, sort = "modified") {
         return null
     }
 
-    let files = res.data.files || []
+    const files: drive_v3.Schema$File[] = (res.data?.files || []) as drive_v3.Schema$File[]
 
     if (sort === "modified") {
         // get oldest folder
-        files = files.sort((a, b) => (a.modifiedTime! < b.modifiedTime! ? -1 : 1))
+        files.sort((a, b) => (a.modifiedTime! < b.modifiedTime! ? -1 : 1))
     }
 
     return files
@@ -67,7 +66,7 @@ export async function listFiles(pageSize = 50, query = "") {
     // let q = "mimeType!='application/vnd.google-apps.folder'"
     // if (query) q += " and " + query
 
-    let res: GaxiosResponse<drive_v3.Schema$FileList>
+    let res: any
     try {
         res = await driveClient.files.list({
             pageSize,
@@ -81,7 +80,7 @@ export async function listFiles(pageSize = 50, query = "") {
         return null
     }
 
-    return res.data?.files || []
+    return (res.data?.files || []) as drive_v3.Schema$File[]
 }
 
 export const types = {
@@ -114,7 +113,7 @@ export async function getFile(id: string) {
     if (id) data.fileId = id
     // if (q) data.q = q
 
-    let file: GaxiosResponse<drive_v3.Schema$File>
+    let file: any
     try {
         file = await driveClient.files.get(data)
     } catch (err) {
@@ -130,7 +129,7 @@ export async function uploadFile(data: any, updateId = "") {
     if (!driveClient) return null
 
     // const isFolder = data.resource.mimeType === types.folder
-    let response: GaxiosResponse<drive_v3.Schema$FileList | drive_v3.Schema$File> | null
+    let response: any
     let error
 
     try {
@@ -533,7 +532,7 @@ export async function syncDataDrive(data: DriveData) {
 
 const TEN_SECONDS_MS = 10 * 1000
 let lastLocalTimestamp = 0
-function getNewest({ driveFile, localPath }: { driveFile: GaxiosResponse<drive_v3.Schema$File> | null; localPath: string }) {
+function getNewest({ driveFile, localPath }: { driveFile: any | null; localPath: string }) {
     const storeInfo = getFileStats(localPath, true)?.stat
 
     const driveModified = driveFile?.data?.modifiedTime ? new Date(driveFile.data.modifiedTime).getTime() : 0

@@ -1,4 +1,5 @@
-import { get, Unsubscriber } from "svelte/store"
+import { get } from "svelte/store"
+import type { Unsubscriber } from "svelte/store"
 import { uid } from "uid"
 import type { TimelineAction } from "../../../types/Show"
 import { activeEdit, activeProject, activeShow, projects, selected, shows, showsCache } from "../../stores"

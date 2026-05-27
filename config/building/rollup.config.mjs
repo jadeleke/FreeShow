@@ -7,19 +7,10 @@ import css from "rollup-plugin-css-only"
 import livereload from "rollup-plugin-livereload"
 import serve from "rollup-plugin-serve"
 import svelte from "rollup-plugin-svelte"
-import startSvelteInspector from "svelte-inspector"
 import sveltePreprocess from "svelte-preprocess"
 
 const production = !process.env.ROLLUP_WATCH
 
-// SVELTE INSPECTOR CONFIG
-// https://github.com/qutran/svelte-inspector
-const inspectorConfig = {
-    activateKeyCode: 73, // I(nspect)
-    openFileKeyCode: 79, // O(pen)
-    editor: "code", // Allowed values: 'sublime', 'atom', 'code', 'webstorm', 'phpstorm', 'idea14ce', 'vim', 'emacs', 'visualstudio'
-    color: "#ff3c00",
-}
 
 // DEPRECATED: WebServers are now built using Vite (see vite.config.servers.mjs)
 // This configuration is kept for reference only
@@ -55,7 +46,7 @@ function mainApp() {
                 },
                 onwarn: handleWarnings,
             }),
-            !production && startSvelteInspector(inspectorConfig),
+            // Svelte inspector removed for compatibility with newer Svelte/Vite plugins
             // extract any component CSS out into a separate file - better for performance
             css({
                 output: "bundle.css",
